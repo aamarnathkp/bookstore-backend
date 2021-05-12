@@ -1,0 +1,22 @@
+{application, book_store,
+ [{description, "An OTP bookstore application"},
+  {vsn, "0.1.0"},
+  {registered, []},
+  {mod, {book_store_app, []}},
+  {applications,
+   [kernel,
+    stdlib,
+    public_key,
+    ssl,
+    sasl,
+    mnesia,
+    cowboy,
+    lager,
+    hackney
+   ]},
+  {env,[]},
+  {modules, []},
+
+  {licenses, ["Apache 2.0"]},
+  {links, []}
+ ]}.
