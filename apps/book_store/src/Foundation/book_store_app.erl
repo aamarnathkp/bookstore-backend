@@ -51,4 +51,3 @@ reset_lager() ->
   application:set_env(lager, log_root, LagerDir),
   application:start(lager).
 
-

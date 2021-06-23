@@ -44,8 +44,8 @@ api_routes(<<"OPTIONS">>, _) ->
 %%% GET Routes
 %%%==================================================================
 
-handle_get([<<"authors">>], _ArgsMap) ->
-  bs_authors:list_all();
+handle_get([<<"authors">>], ArgsMap) ->
+  bs_authors:list_all(ArgsMap);
 handle_get([<<"books">>], _ArgsMap) ->
   bs_books:list_all();
 handle_get([<<"counts">>], _ArgsMap) ->

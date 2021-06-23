@@ -26,15 +26,23 @@
 %%% Callbacks
 %%%===================================================================
 init(Req, State) ->
-      {cowboy_websocket, Req, State#{ws_request => Req}, #{idle_timeout => 120000}}.
+  Cookies = cowboy_req:parse_cookies(Req),
+  BSSession = proplists:get_value(<<"bs_cookie">>, Cookies),
+  {cowboy_websocket, Req, State#{ws_request => Req, bs_cookie => BSSession},
+                               #{idle_timeout => 120000}}.
 
-websocket_init(State) ->
+websocket_init(#{bs_cookie := BSSession} = State) ->
   lager:info("ws state ~p",[State]),
-  send_ping(),
-  {ok, State}.
+  case bs_identity:authenticate(BSSession) of
+    {true, UserId} ->
+      send_ping(),
+      {ok, State#{user_id => UserId, ping_missed => 0}};
+    _ ->
+      {stop, State}
+  end.
 
 websocket_handle(<<"ping">>, State) ->
-  lager:debug("got the ping message"),
+  lager:info("got the ping message"),
 %  Status = maps:get(status, State, undefined),
 %  case Status of
 %    connected ->
@@ -43,10 +51,16 @@ websocket_handle(<<"ping">>, State) ->
 %      lager:info("ping message when the client is not yet connected"),
 %      {stop, State}
 %  end;
-websocket_handle({text, <<"pong">>}, State) ->
-  lager:debug("got the pong message"),
-  TRef = send_ping(),
-  {ok, State#{time_ref => TRef}};
+websocket_handle({text, <<"pong">>},#{bs_cookie := BSSession} = State) ->
+  lager:info("got the pong message"),
+  case bs_identity:authenticate(BSSession) of
+    {true, _UserId} ->
+      TRef = send_ping(),
+     {ok, State#{time_ref => TRef}};
+    _ ->
+      lager:info("authorisation failed closing ws"),
+      {stop, State}
+  end;
 websocket_handle({text, Message}, State) ->
   lager:info("Received Connect Message:~p", [Message]),
   case handle_message(Message, State) of

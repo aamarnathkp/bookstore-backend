@@ -80,7 +80,11 @@ init_tables() ->
                               {index, [author_uuid, published_year, language, price, in_stock]}]),
   mnesia:create_table(book_reviews, [{attributes, record_info(fields, book_reviews)},
                                      {disc_copies, [node()]},
-                                     {index, [author_uuid, book_uuid, user_uuid]}]).
+                                     {index, [author_uuid, book_uuid, user_uuid]}]),
+  mnesia:create_table(quiz, [{attributes, record_info(fields, quiz)},
+                              {disc_copies, [node()]},
+                              {index, [name, duration]}]).
+
 
 
 

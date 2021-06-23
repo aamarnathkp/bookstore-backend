@@ -105,8 +105,15 @@ frame_request(Req, State) ->
   #{method := Method} = Req,
   #{body := Body} = State,
   #{path_info := PathInfo} = Req,
+  Pages = query_string(Method, Req),
   UserId = maps:get(user_id, State, undefined),
-  Body#{method => Method, user_id => UserId, path => PathInfo}.
+  Body#{method => Method, user_id => UserId,
+        path => PathInfo, pages => Pages}.
+
+query_string(<<"GET">>, Req) ->
+  #{data := Data} = cowboy_req:match_qs([{data, [], <<"{}">>}], Req),
+  bs_utils:decode_json(Data, [return_maps]);
+query_string(_, _) -> #{}.
 
 make_function_call(Request) ->
   bs_api_routes:api_routes(Request).

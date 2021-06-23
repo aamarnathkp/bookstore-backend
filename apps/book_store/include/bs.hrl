@@ -118,4 +118,29 @@
           info_map
          }).
 
+-record(quiz, {
+          uuid,
+          name,
+          duration,
+          created_by,
+          created_on,
+          modified_by,
+          modified_on
+         }).
+
+-record(questions, {
+          uuid,
+          text,
+          answers_options_rl,
+          created_by,
+          created_on,
+          modified_by,
+          modified_on
+         }).
+
+-record(answers_options_r, {
+          option_text,
+          status % true/false
+         }).
+
 

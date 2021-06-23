@@ -89,7 +89,7 @@ list_books(Books) ->
   Fields = record_info(fields, books),
   BooksMap = bs_utils:rec_to_map(Fields, Books),
   Total = length(BooksMap),
-  {ok, #{total => bs_utils:to(binary, Total),
+  {ok, #{total =>  Total, %bs_utils:to(binary, Total),
          items => BooksMap}}.
 
 format_image_name(#{content_type := <<"image/png">>}, UuidStr) -> UuidStr ++ ".png";
